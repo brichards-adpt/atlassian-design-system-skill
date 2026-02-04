@@ -19,7 +19,8 @@ Before starting any work:
 2. **Reference Priority**: Always check local references first (ads-components.md, ads-icons.md, ads-tokens.md)
 3. **MCP Fallback**: Only use the Atlassian MCP server if local docs are missing details
 4. **Search, Don't Guess**: If a component/icon name isn't found, use search tools to find the exact export. Never guess imports
-5. **Build Validation**: Proactively check for TypeScript errors and build failures. Fix obvious errors (missing imports, type mismatches, syntax) without prompting
+5. **Icon Protocol**: ALWAYS search `ads-icons.md` for icon import paths. NEVER create custom SVG files or use non-ADS icons
+6. **Build Validation**: Proactively check for TypeScript errors and build failures. Fix obvious errors (missing imports, type mismatches, syntax) without prompting
 
 ## Project Setup
 
@@ -85,20 +86,58 @@ When analyzing design reference images:
 
 - **Tokens Only**: All style values (color, space, font, shadow, border.radius) MUST use validated tokens from `ads-tokens.md`
 - **Components**: Use standard components from `ads-components.md` ONLY if they match the design
-- **Icons**: Import from `@atlaskit/icon/core/...` - refer to `ads-icons.md` for correct paths
-- **Tailwind Translation**:
+- **ADS Translation** (NOT Tailwind):
   - `flex-col` → `<Stack>`
   - `flex-row` → `<Inline>`
   - `gap-{n}` → `space="space.{token}"`
   - `-m-{n}` → `<Bleed>`
   - `hidden md:block` → `<Show above="md">`
 
+### Icon Import Protocol (CRITICAL)
+
+**MANDATORY WORKFLOW FOR ALL ICONS:**
+
+1. **Search `ads-icons.md` FIRST**: Before implementing ANY icon, search the reference file for the icon name
+2. **Use Exact Import Path**: Copy the exact import statement from `ads-icons.md`
+3. **If Icon Not Found**: Search for semantically similar icons (e.g., "trash" → "delete", "plus" → "add")
+4. **Still Not Found?**: Use MCP to query Atlassian icon catalog or ask user for clarification
+5. **NEVER**: Create custom SVG, use inline SVG code, or import from non-ADS icon libraries
+
+**FORBIDDEN ICON PRACTICES:**
+```tsx
+// ❌ NEVER DO THIS - Custom SVG
+const CustomIcon = () => <svg>...</svg>;
+
+// ❌ NEVER DO THIS - Non-ADS icon library
+import { Trash } from 'lucide-react';
+import { FaTrash } from 'react-icons/fa';
+
+// ❌ NEVER DO THIS - Inline SVG
+<svg width="24" height="24">...</svg>
+
+// ✅ ALWAYS DO THIS - ADS icon from ads-icons.md
+import TrashIcon from '@atlaskit/icon/core/trash';
+```
+
+**Example Workflow:**
+```
+User needs: "trash icon"
+1. Search ads-icons.md for "trash" → Found: TrashIcon
+2. Import: import TrashIcon from '@atlaskit/icon/core/trash';
+3. Use: <TrashIcon label="Delete item" />
+```
+
 ## Implementation Rules
 
 ### The Golden Rule: ADS Only
 
 - **STRICT**: Use ONLY ADS components, primitives (Box, Stack, Inline), and tokens
-- **FORBIDDEN**: Custom CSS with hard-coded values, other UI libraries
+- **ABSOLUTELY FORBIDDEN**:
+  - Custom CSS with hard-coded values
+  - Other UI libraries (including Tailwind CSS)
+  - Custom SVG files or inline SVG code for icons
+  - Non-ADS icon libraries (Heroicons, Lucide, FontAwesome, etc.)
+  - Any custom styling outside of `@atlaskit/css`
 - **NO CUSTOM SELECTORS**: Don't use className or CSS selectors to target child elements
 - **DESIGN ACCURACY FIRST**: Pixel-perfect match to design reference is the primary goal
 
@@ -227,29 +266,36 @@ When building Atlassian Forge apps:
 
 - If Figma: Extract and validate all tokens
 - If Screenshot: Apply analysis logic gates
-- Identify components, spacing, colors, and interactive states
+- Identify components, spacing, colors, interactive states, and icons
 
-### 2. Choose Implementation Approach
+### 2. Validate Icons First
+
+- Search `ads-icons.md` for EVERY icon needed in the design
+- Confirm exact import paths before writing any code
+- If icon not found, search for semantic alternatives or use MCP
+- NEVER proceed with custom SVG or non-ADS icons
+
+### 3. Choose Implementation Approach
 
 - Check `ads-components.md` for standard components
 - If standard matches: Use it
 - If standard doesn't match: Present tradeoff to user
 - Upon decision: Implement with primitives or standard component
 
-### 3. Validate Tokens
+### 4. Validate Tokens
 
 - Cross-reference EVERY token with `ads-tokens.md`
 - Ensure semantic correctness (not just visual match)
 - Verify pairing (foreground + background)
 
-### 4. Implement with Build Safety
+### 5. Implement with Build Safety
 
-- Write code with proper imports
+- Write code with proper imports (including validated icon imports)
 - Include JSX pragma for Compiled
 - Run type check if available
 - Fix errors proactively
 
-### 5. Commit Incrementally
+### 6. Commit Incrementally
 
 - Commit after discrete steps
 - Use clear commit messages
@@ -259,11 +305,13 @@ When building Atlassian Forge apps:
 
 1. ✅ **Design Accuracy**: Does UI pixel-perfectly match the design reference?
 2. ✅ **Local References**: Were ads-components.md, ads-icons.md, ads-tokens.md checked first?
-3. ✅ **Compiled Standard**: Using `@atlaskit/css` with JSX pragma and no dynamic `css()` calls?
-4. ✅ **Token Compliance**: Every style value derived from validated token in ads-tokens.md?
-5. ✅ **Accessibility**: All icons labeled, inputs have labels, Heading levels correct?
-6. ✅ **Responsive Primitives**: Using Bleed/Show/Hide instead of custom CSS?
-7. ✅ **Build Success**: No TypeScript errors or build failures?
+3. ✅ **Icon Validation**: Are ALL icons imported from `@atlaskit/icon/core/...` with paths from ads-icons.md?
+4. ✅ **ADS Only**: No Tailwind CSS, custom SVGs, or non-ADS libraries present?
+5. ✅ **Compiled Standard**: Using `@atlaskit/css` with JSX pragma and no dynamic `css()` calls?
+6. ✅ **Token Compliance**: Every style value derived from validated token in ads-tokens.md?
+7. ✅ **Accessibility**: All icons labeled, inputs have labels, Heading levels correct?
+8. ✅ **Responsive Primitives**: Using Bleed/Show/Hide instead of custom CSS?
+9. ✅ **Build Success**: No TypeScript errors or build failures?
 
 ## Reference Files
 
@@ -279,7 +327,9 @@ Complete list of ADS components with NPM packages, descriptions, and status. Ref
 
 Comprehensive icon catalog with correct import paths from `@atlaskit/icon/core`. Includes deprecated icons to avoid.
 
-**When to read**: When implementing any icon in the UI. Always search this file for the correct import path.
+**When to read**: MANDATORY - Search this file BEFORE implementing ANY icon. This is the ONLY source for icon import paths. Never create custom SVGs or use non-ADS icon libraries.
+
+**Critical**: If you need an icon, search this file first. If the exact icon isn't found, search for semantic alternatives (e.g., "trash" → "delete", "plus" → "add"). Only if no suitable icon exists should you ask the user or use MCP for additional options.
 
 ### references/ads-tokens.md
 
