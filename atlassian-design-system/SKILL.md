@@ -245,6 +245,19 @@ Avoid using `token()` in initial state or outside `css()` if it depends on theme
 
 **DO NOT** use fallback values in tokens (e.g., `token('color.text', '#000')`). This breaks theming and fails linting.
 
+### Forge Custom UI: Theming Not Enabled
+
+**CRITICAL ERROR**: If your Forge Custom UI app doesn't respond to dark mode:
+- You forgot to call `view.theme.enable()` from `@forge/bridge`
+- Tokens won't adapt to theme changes automatically
+- Your app will look broken in dark mode
+
+**Solution**: Add theme enablement in your root component's `useEffect`:
+```javascript
+import { view } from '@forge/bridge';
+useEffect(() => { view.theme.enable(); }, []);
+```
+
 ### Deprecation Watch
 
 - Use `@atlaskit/button/new` instead of `@atlaskit/button`
@@ -253,12 +266,79 @@ Avoid using `token()` in initial state or outside `css()` if it depends on theme
 
 ## Forge App Context
 
-When building Atlassian Forge apps:
+### Custom UI: Theming & Token Setup (CRITICAL)
 
-1. **Custom UI**: ADS components work seamlessly in Forge Custom UI (iframe-based)
-2. **UI Kit**: For Forge UI Kit, use the `@forge/react` components which are based on ADS
-3. **Manifest Scopes**: Ensure proper scopes for ADS packages in `manifest.yml`
-4. **Build Config**: Configure bundler for `@compiled/react` in Forge context
+**Forge Custom UI apps MUST enable theming to support dark mode and token-based styling:**
+
+```javascript
+// In your main component (e.g., App.js)
+import { view } from '@forge/bridge';
+
+// Call this ONCE on component mount
+useEffect(() => {
+  view.theme.enable();
+}, []);
+```
+
+**What this does:**
+- Fetches current theme from host (Jira/Confluence)
+- Applies theme reactively as host theme changes
+- Adds `data-color-mode` attribute (`light`, `dark`, or `auto`) to your iframe's HTML
+- Enables all ADS tokens to automatically adapt to the active theme
+
+**Token Usage in Custom UI:**
+
+1. **CSS-in-JS** (recommended for React):
+   ```tsx
+   import { token } from '@atlaskit/tokens';
+   
+   const styles = css({
+     backgroundColor: token('color.background.neutral'),
+     color: token('color.text'),
+     padding: token('space.200'),
+   });
+   ```
+
+2. **Vanilla CSS/Sass/Less**:
+   ```css
+   .component {
+     background: var(--ds-surface-raised);
+     padding: var(--ds-space-100);
+     color: var(--ds-text);
+     border-radius: var(--ds-border-radius);
+   }
+   ```
+
+3. **Inline styles** (avoid if possible):
+   ```tsx
+   <div style={{ borderRadius: token('border.radius.300') }}>
+   ```
+
+**CRITICAL: Theme-Aware Styling**
+
+- **Query `data-color-mode`** for custom brand colors or theme-specific logic
+- **NEVER read or modify `data-theme`** - it's internal and may change
+- **NO HARDCODED COLORS** - breaks dark mode. Always use tokens.
+- **Keep `@atlaskit/tokens` updated** to ensure accurate token references
+
+**Verification:**
+Inspect your iframe's `<html>` tag - you should see:
+```html
+<html data-color-mode="light" data-theme="...">
+```
+
+### UI Kit
+
+For Forge UI Kit, use the `@forge/react` components which are based on ADS:
+- Theming is handled automatically by Forge runtime
+- Use `@forge/react` components directly
+- Token() function works the same way
+
+### Build Configuration
+
+- **Manifest Scopes**: Ensure proper scopes for ADS packages in `manifest.yml`
+- **Build Config**: Configure bundler for `@compiled/react` in Forge context
+- **Linting**: Add `@atlaskit/eslint-plugin-design-system` to prevent deprecated tokens
 
 ## Workflow
 
