@@ -208,50 +208,52 @@ Negative Spacing
 
 | Token Name | Usage |
 | :---- | :---- |
-| elevation.surface | Primary page background (rest, hovered, pressed). |
-| elevation.surface.overlay | Background for floating elements (rest, hovered, pressed). |
-| elevation.surface.raised | Background for cards (rest, hovered, pressed). |
-| elevation.surface.sunken | Secondary background for grouping items. |
-| elevation.shadow.raised | Shadow for cards and panels. |
-| elevation.shadow.overlay | Shadow for floating menus and modals. |
-| elevation.shadow.overflow | Shadow when content scrolls under headers. |
-| elevation.shadow.overflow.perimeter | Perimeter shadow fallback. |
-| elevation.shadow.overflow.spread | Spread shadow fallback. |
+| elevation.surface | Baseline flat UI surface with no visual lift. Used for body content (e.g., Confluence pages). Supports .hovered and .pressed states. |
+| elevation.surface.sunken | Lowest elevation creating a backdrop or well for other content (e.g., Kanban board columns). **Only use on default surface level**, not on raised or overlay elevations. |
+| elevation.surface.raised | Sits slightly higher than default elevations. Reserved for movable cards (Jira/Trello cards) or emphasis. **Always pair with elevation.shadow.raised**. Supports .hovered and .pressed states. |
+| elevation.surface.overlay | Highest elevation for UI layered over other UI (modals, dialogs, dropdown menus, floating toolbars, FABs). **Always pair with elevation.shadow.overlay**. Can stack on other overlays. Supports .hovered and .pressed states. |
+| elevation.shadow.raised | Shadow for cards and panels. **Must be paired with elevation.surface.raised**. Critical for dark mode differentiation. |
+| elevation.shadow.overlay | Shadow for floating menus, modals, and overlays. **Must be paired with elevation.surface.overlay**. |
+| elevation.shadow.overflow | Indicates scrolled content has moved outside a view (vertical or horizontal). Applied at content cut-off points. |
+| elevation.shadow.overflow.perimeter | Perimeter shadow fallback when box shadows aren't technically feasible. |
+| elevation.shadow.overflow.spread | Spread shadow fallback when box shadows aren't technically feasible. |
+
+**Dark Mode Note**: In dark mode, elevated surfaces use lighter colors in addition to shadows for differentiation between layers, as shadows can be harder to see.
 
 ## **4\. Typography Tokens**
 
 ### **Heading & Body**
 
-| Token Name | Intended Usage |
-| :---- | :---- |
-| font.heading.xxlarge | Page titles / Promotions. |
-| font.heading.xlarge | Page titles. |
-| font.heading.large | Page titles. |
-| font.heading.medium | Component headers. |
-| font.heading.small | Small component headers. |
-| font.heading.xsmall | Small component headers. |
-| font.heading.xxsmall | Fine print headers. |
-| font.body.large | Long-form text (blogs). |
-| font.body | Default UI text. |
-| font.body.small | Secondary level content / helper text. |
+| Token Name | Size (rem/px) | Line Height | Intended Usage |
+| :---- | :---- | :---- | :---- |
+| font.heading.xxlarge | 2rem / 32px | 2.25rem / 36px | Brand and marketing content, page titles, promotions. |
+| font.heading.xlarge | 1.75rem / 28px | 2rem / 32px | Page titles in apps (e.g., forms). |
+| font.heading.large | 1.5rem / 24px | 1.75rem / 28px | Page titles and large components with ample space. |
+| font.heading.medium | 1.25rem / 20px | 1.5rem / 24px | Component titles (e.g., in modals). |
+| font.heading.small | 1rem / 16px | 1.25rem / 20px | Titles in space-constrained components. |
+| font.heading.xsmall | 0.875rem / 14px | 1.25rem / 20px | Secondary headings. |
+| font.heading.xxsmall | 0.75rem / 12px | 1rem / 16px | Fine print headings. |
+| font.body.large | 1rem / 16px | 1.5rem / 24px | Long-form content for comfortable reading (blogs, articles). |
+| font.body | 0.875rem / 14px | 1.25rem / 20px | Default UI text and descriptive content. |
+| font.body.small | 0.75rem / 12px | 1rem / 16px | Secondary or fine print content. Avoid sizes smaller than 12px. |
 
 ### **Metric, Code & Weight**
 
-| Token Name | Intended Usage |
-| :---- | :---- |
-| font.metric.large | Number emphasis in large donuts. |
-| font.metric.medium | Number emphasis in medium donuts. |
-| font.metric.small | Number emphasis in small tiles. |
-| font.code | Monospaced code snippets. |
-| font.weight.regular | Default (400). |
-| font.weight.medium | Text next to icons (500). |
-| font.weight.semibold | Emphasized text (600). |
-| font.weight.bold | Strong emphasis (700). |
-| font.family.heading | Default UI heading typeface. |
-| font.family.body | Default UI body typeface. |
-| font.family.code | Monospaced code typeface. |
-| font.family.brand.heading | Brand heading typeface. |
-| font.family.brand.body | Brand body typeface. |
+| Token Name | Size (rem/px) | Line Height | Intended Usage |
+| :---- | :---- | :---- | :---- |
+| font.metric.large | 1.75rem / 28px | 2rem / 32px | Emphasizing numbers in large visualizations. |
+| font.metric.medium | 1.5rem / 24px | 1.75rem / 28px | Emphasized numeric values in medium contexts. |
+| font.metric.small | 1rem / 16px | 1.25rem / 20px | Smaller numeric emphasis in tiles. |
+| font.code | 0.875em / 12px | 20px | Monospaced code snippets and inline code. |
+| font.weight.regular | - | - | Default font weight (400). |
+| font.weight.medium | - | - | Text next to icons, subtle emphasis (500). |
+| font.weight.semibold | - | - | Emphasized text (600). |
+| font.weight.bold | - | - | Strong emphasis, headings default weight (700). |
+| font.family.heading | - | - | Default UI heading typeface. |
+| font.family.body | - | - | Default UI body typeface. |
+| font.family.code | - | - | Monospaced code typeface. |
+| font.family.brand.heading | - | - | Brand heading typeface. |
+| font.family.brand.body | - | - | Brand body typeface. |
 
 #### **Works cited**
 
