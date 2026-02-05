@@ -189,14 +189,20 @@ Negative Spacing
 | border.width | 1px | Default border/divider width. |
 | border.width.selected | 2px | Width for active/selected items. |
 | border.width.focused | 2px | Focus ring width. |
-| radius.xsmall | 2px | Badges/Chips. |
-| radius.small | 4px | Labels. |
-| radius.medium | 6px | Buttons and inputs. |
-| radius.large | 8px | Cards. |
-| radius.xlarge | 12px | Modals. |
-| radius.xxlarge | 16px | Largest containers. |
-| radius.full | 9999px | Circles/Pills. |
-| radius.tile | 25% | Tiles only. |
+| radius.xsmall | 2px | Small detail elements: badges, checkboxes, avatar labels, keyboard shortcuts. |
+| radius.small | 4px | Supporting elements: labels, lozenges, timestamps, tags, dates, tooltip containers. |
+| radius.medium | 6px | Interactive elements: buttons, inputs, text areas, selects, navigation items, smart links. |
+| radius.large | 8px | Containment elements: cards, in-page containers, floating UI, dropdown menus. |
+| radius.xlarge | 12px | Large page elements: full-page containers, large containers, modals, Kanban columns, tables. |
+| radius.xxlarge | 16px | Video player containers. |
+| radius.full | 999px | Circular elements (user/people related): avatars, names, user-related UI, emoji reactions. |
+| radius.tile | 25% | Tile component system only. |
+| radius.focus.xsmall | 4px | Focus ring for xsmall radius elements (2px offset). |
+| radius.focus.small | 6px | Focus ring for small radius elements (2px offset). |
+| radius.focus.medium | 8px | Focus ring for medium radius elements (2px offset). |
+| radius.focus.large | 10px | Focus ring for large radius elements (2px offset). |
+| radius.focus.xlarge | 14px | Focus ring for xlarge radius elements (2px offset). |
+| radius.focus.xxlarge | 18px | Focus ring for xxlarge radius elements (2px offset). |
 
 ### **Elevation & Shadows**
 
