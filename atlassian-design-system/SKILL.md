@@ -127,6 +127,118 @@ User needs: "trash icon"
 3. Use: <TrashIcon label="Delete item" />
 ```
 
+## Token Setup & Configuration
+
+### Package Installation
+
+```bash
+npm install @atlaskit/tokens
+```
+
+### Babel Plugin Configuration (CRITICAL)
+
+**For proper theme support, configure the Babel plugin:**
+
+```javascript
+// babel.config.js or .babelrc
+{
+  "plugins": [
+    ["@atlaskit/tokens/babel-plugin", {
+      "shouldUseAutoFallback": true  // Enables automatic fallback values
+    }]
+  ]
+}
+```
+
+**For Compiled CSS-in-JS users**, add to `.compiledcssrc`:
+```json
+{
+  "babelPlugins": ["@atlaskit/tokens/babel-plugin"]
+}
+```
+
+### How token() Function Works
+
+The `token()` function returns CSS custom properties:
+
+```javascript
+import { token } from '@atlaskit/tokens';
+
+token('color.background.neutral')  // Returns: var(--ds-background-neutral)
+token('space.200')                 // Returns: var(--ds-space-200)
+token('border.radius')             // Returns: var(--ds-border-radius)
+```
+
+**Why this matters:**
+- CSS variables automatically adapt when theme changes
+- No JavaScript re-renders needed for theme switching
+- Values are read from active theme at runtime
+
+### Theme Switcher Setup (Development/Testing)
+
+**For non-Forge apps**, enable runtime theme switching:
+
+```javascript
+import { setGlobalTheme } from '@atlaskit/tokens';
+
+// In your app initialization
+setGlobalTheme({
+  light: 'light',
+  dark: 'dark',
+  colorMode: 'auto'  // Respects system preferences
+});
+```
+
+**Verification**: Check your HTML for theme attributes:
+```html
+<html data-theme="light:light dark:dark" data-color-mode="light">
+```
+
+**For Forge Custom UI apps**: Use `view.theme.enable()` instead (see Forge App Context section).
+
+### Linting Setup
+
+**ESLint** (for CSS-in-JS):
+```json
+{
+  "plugins": ["@atlaskit/design-system"],
+  "rules": {
+    "@atlaskit/design-system/ensure-design-token-usage": "warn",
+    "@atlaskit/design-system/no-unsafe-design-token-usage": "error",
+    "@atlaskit/design-system/no-deprecated-design-token-usage": "error"
+  }
+}
+```
+
+**Stylelint** (for vanilla CSS/Sass/Less):
+```bash
+npm install @atlaskit/stylelint-design-system
+```
+
+These tools:
+- Warn about deprecated tokens
+- Prevent unsafe token usage
+- Assist with automatic updates
+
+### Fallback Values: Critical Rules
+
+**NEVER provide fallback values manually:**
+```tsx
+// ❌ WRONG - Breaks theming
+token('color.text', '#000')
+
+// ✅ CORRECT - Let Babel plugin handle it
+token('color.text')
+```
+
+**Why?** Manual fallbacks:
+- Override theme values
+- Break dark mode
+- Fail linting
+- Create maintenance issues
+
+The Babel plugin automatically provides light theme fallbacks during build.
+
 ## Implementation Rules
 
 ### The Golden Rule: ADS Only
@@ -244,6 +356,30 @@ Avoid using `token()` in initial state or outside `css()` if it depends on theme
 ### Token Errors
 
 **DO NOT** use fallback values in tokens (e.g., `token('color.text', '#000')`). This breaks theming and fails linting.
+
+**Common Token Issues:**
+
+1. **Missing Babel Plugin**: If tokens aren't working, verify `@atlaskit/tokens/babel-plugin` is configured
+   - Symptom: Token values don't change with theme
+   - Fix: Add plugin to babel.config.js with `shouldUseAutoFallback: true`
+
+2. **Using Raw CSS Variables**: Don't bypass the token() function
+   ```tsx
+   // ❌ WRONG
+   const styles = css({ color: 'var(--ds-text)' });
+   
+   // ✅ CORRECT  
+   const styles = css({ color: token('color.text') });
+   ```
+
+3. **Token Not Found Errors**: Token name typo or deprecated token
+   - Check `ads-tokens.md` reference for correct names
+   - Enable ESLint rules to catch deprecated tokens
+
+4. **Theme Not Applying**:
+   - **Forge Custom UI**: Did you call `view.theme.enable()`?
+   - **Regular React**: Did you call `setGlobalTheme()`?
+   - Verify: Inspect HTML for `data-color-mode` and `data-theme` attributes
 
 ### Forge Custom UI: Theming Not Enabled
 
