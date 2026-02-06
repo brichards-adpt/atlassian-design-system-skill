@@ -239,6 +239,16 @@ token('color.text')
 
 The Babel plugin automatically provides light theme fallbacks during build.
 
+**⚠️ EXCEPTION: Border Radius in Forge Custom UI**
+
+Border radius tokens are not yet fully supported in Custom UI. **Temporarily use pixel fallbacks**:
+```tsx
+// Exception for Custom UI only
+borderRadius: token('radius.medium', '6px')
+```
+
+This is a workaround until ADS adds full border radius support to Custom UI. Remove fallbacks once supported.
+
 ## Implementation Rules
 
 ### The Golden Rule: ADS Only
@@ -449,6 +459,33 @@ useEffect(() => {
    ```tsx
    <div style={{ borderRadius: token('border.radius.300') }}>
    ```
+
+**⚠️ KNOWN LIMITATION: Border Radius in Custom UI**
+
+Border radius tokens are **not yet fully supported** in Forge Custom UI. As a temporary workaround, use pixel fallback values:
+
+```tsx
+// ❌ May not work in Custom UI
+borderRadius: token('radius.medium')
+
+// ✅ WORKAROUND: Use fallback until supported
+borderRadius: token('radius.medium', '6px')  // 6px fallback
+borderRadius: token('radius.small', '4px')  // 3px fallback
+borderRadius: token('radius.full', '999px')  // circular
+```
+
+**Reference values** (from ads-tokens.md):
+- `radius.xsmall`: 2px
+- `radius.small`: 4px
+- `radius.medium`: 6px
+- `radius.large`: 8px
+- `radius.xlarge`: 12px
+- `radius.xxlarge`: 16px
+- `radius.full`: 999px (circular)
+
+**When this limitation is fixed**, remove fallback values to enable proper theming.
+
+See: https://community.developer.atlassian.com/t/confusing-how-to-use-xcss-to-express-circle-border-radius/82501
 
 **CRITICAL: Theme-Aware Styling**
 
