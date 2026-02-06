@@ -1,5 +1,13 @@
 # **Atlassian Design System Token Reference**
 
+
+> **⚙️ Setup Required**: Before using these tokens, you must:
+> 1. Install `@atlaskit/tokens` package
+> 2. Configure `@atlaskit/tokens/babel-plugin` in your build setup
+> 3. Enable theming: `setGlobalTheme()` for regular apps or `view.theme.enable()` for Forge Custom UI
+>
+> See SKILL.md → "Token Setup & Configuration" for complete setup instructions.
+
 This document provides a comprehensive list of design tokens in the Atlassian Design System. Tokens are the single source of truth for all stylistic values. Always use the JS syntax (e.g., color.text) with the token() helper function from @atlaskit/tokens or directly in the xcss prop of a primitive component.
 
 ## **1\. Token Usage Rules & Standards**
